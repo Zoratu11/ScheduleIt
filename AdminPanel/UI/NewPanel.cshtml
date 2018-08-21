@@ -1,0 +1,128 @@
+﻿@model IEnumerable<ScheduleUsers.Models.ApplicationUser>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<!--Dropdown Menu-->
+<div class="row" style="margin-top: 20px;">
+        <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="dropdown">
+                <button id="button-dropdown" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                    Filters
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li class="dropdown-submenu" style="position: relative;">
+                        <a class="test" tabindex="-1" href="#">Position <span class="caret"></span></a>
+                        <ul class="dropdown-menu" style="top:0; left:100%; margin-top: -1px;">
+                            @foreach (var position in ViewBag.Positions)
+                            {
+                                <li><a tabindex="-1" onclick="loadUsers('pos-@position.Text')">@position.Text</a></li>
+                            }
+                        </ul>
+                    </li>
+                    <li class="dropdown-submenu" style="position: relative;">
+                        <a class="test" tabindex="-1" href="#">Department <span class="caret"></span></a>
+                        <ul class="dropdown-menu" style="top:0; left:100%; margin-top: -1px;">
+                            @foreach (var department in ViewBag.Departments)
+                            {
+                                <li><a tabindex="-1" onclick="loadUsers('dpt-@department.Text')">@department.Text</a></li>
+                            }
+                        </ul>
+                    </li>
+                    <li><a tabindex="-1" onclick="loadUsers('FullTime')">Full Time</a></li>
+                    <li><a tabindex="-1" onclick="loadUsers('PartTime')">Part Time</a></li>
+                    <li><a tabindex="-1" onclick="loadUsers('ClockedIn')">Clocked In</a></li>
+                    <li><a tabindex="-1" onclick="loadUsers('ClockedOut')">Clocked Out</a></li>
+                </ul>
+            </div>
+
+            <input class="form-control my-1" id="indexSearch" type="text" onkeyup="searchFunction()" placeholder="Search" title="Search" />
+        </div>
+
+        <div class="title-container col-sm-6 col-md-8 col-lg-9">
+            <h2 class="text-center" id="page-title">Employees</h2>
+
+            <a href="/Employer/User/Register" id="add-employee-btn">Add Employee</a>
+        </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-6 col-md-4 col-lg-3" style="overflow: auto;" id="user-table-container">
+        <table class="table" id="indexusertable">
+
+            @{Html.RenderAction("IndexUserList");}
+
+        </table>
+    </div>
+    <div class=" col-sm-6 col-md-8 col-lg-9 index-display-div" id="details-div">
+        Details for the selected employee will be displayed here
+    </div>
+</div>
+
+<!-- The Calendar Event Modal -->
+<div id="fullCalModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span> <span class="sr-only">close</span></button>
+                <h4 id="modalTitle" class="modal-title"></h4>
+            </div>
+            <div id="modalBody" class="modal-body"> </div>
+            <div id="modalNote" class="modal-body"> </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function offset(el) {
+        const rect = el.getBoundingClientRect(),
+            scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
+            scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        return { top: rect.top + scrollTop, left: rect.left + scrollLeft }
+    }
+
+    //Fix styling issues
+    $(document).ready(() => {
+        let $element = $("#indexSearch");
+        $element.css("max-width", "100%");
+
+        let lastWidth = $element.css("width");
+        $("#button-dropdown").css("width", lastWidth);
+
+        //This is how we make the two divs take up the rest of the height
+        const detailsDiv = document.getElementById("details-div");
+        const userTableDiv = document.getElementById("user-table-container");
+        const footer = document.getElementById("fixed-footer");
+
+        const divOffset = offset(detailsDiv);
+        //The 35 is to make up for the padding issues
+        const newElementHeight = window.innerHeight - divOffset.top - footer.clientHeight - 35;
+        detailsDiv.style.height = newElementHeight + "px";
+        userTableDiv.style.height = newElementHeight + "px";
+    });
+
+    $(window).resize(function () {
+        let $element = $("#indexSearch");
+        let lastWidth = $element.css("width");
+        $("#button-dropdown").css("width", lastWidth);
+
+        //This is how we make the two divs take up the rest of the height
+        const detailsDiv = document.getElementById("details-div");
+        const userTableDiv = document.getElementById("user-table-container");
+        const footer = document.getElementById("fixed-footer");
+
+        const divOffset = offset(detailsDiv);
+        const newElementHeight = window.innerHeight - divOffset.top - footer.clientHeight - 35;
+        detailsDiv.style.height = newElementHeight + "px";
+        userTableDiv.style.height = newElementHeight + "px";
+    });
+
+
+</script>
+
